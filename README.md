@@ -50,10 +50,12 @@ The goal is to provide a simple bridge layer between a full-featured desktop sim
 
 ## 🛠 Build with Visual Studio 2022
 
-1. **Clone the repository**
+1. **Get the sources**  
+   You can either clone the repository or download the ZIP archive.
+
+   **Option A – Clone with Git**
    ```bash
-   git clone [https://github.com/robustini/msfs_ap_bridge.git](https://github.com/robustini/msfs_ap_bridge.git)
-   cd msfs_ap_bridge
+   git clone https://github.com/robustini/MSFSAPBridge.git
    ```
 
 2. **Open in Visual Studio**
