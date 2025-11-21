@@ -7,9 +7,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_definitions(-DUNICODE=0 -D_UNICODE=0)
 
-# ---- Cerca automaticamente SimConnect ----
-# L'utente può anche specificarlo con:
-#   cmake -DMSFS_SDK_DIR="C:/Percorso/SDK" ..
 if(NOT DEFINED MSFS_SDK_DIR)
     find_path(MSFS_SDK_DIR
         NAMES "SimConnect SDK/include/SimConnect.h"
@@ -29,7 +26,6 @@ else()
     message(FATAL_ERROR "SimConnect.h non trovato! Imposta MSFS_SDK_DIR (es. -DMSFS_SDK_DIR=\"C:/MSFS SDK\")")
 endif()
 
-# ---- File sorgenti e risorse ----
 set(SOURCES
     src/msfs_ap_bridge.cpp
 )
@@ -37,16 +33,14 @@ set(RESOURCES
     src/app.rc
 )
 
-# ---- Eseguibile ----
 add_executable(msfs_ap_bridge WIN32 ${SOURCES} ${RESOURCES})
 target_link_libraries(msfs_ap_bridge PRIVATE SimConnect)
 
-# ---- Icona ----
 set(APP_ICON "${CMAKE_SOURCE_DIR}/res/msfs_ap_bridge.ico")
 set_source_files_properties(src/app.rc PROPERTIES LANGUAGE RC)
 
-# ---- Opzioni MSVC ----
 if(MSVC)
     target_compile_options(msfs_ap_bridge PRIVATE /W4 /EHsc)
     target_link_options(msfs_ap_bridge PRIVATE "/DELAYLOAD:SimConnect.dll")
+    add_compile_options(/EHa)
 endif()
