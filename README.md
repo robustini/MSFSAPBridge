@@ -54,6 +54,17 @@ The goal is to provide a simple bridge layer between a full-featured desktop sim
 
 ---
 
+## 📥 Download
+
+Prebuilt Windows binaries are available in the
+[Releases](../../releases) section of this repository.
+
+Download the latest `.zip`, extract it, and make sure that
+`SimConnect.dll` is in the same folder as `msfs_ap_bridge.exe`
+(see the SimConnect note above for details).
+
+---
+
 ## 🛠 Build with Visual Studio 2022
 
 1. **Get the sources**  
@@ -119,9 +130,9 @@ Once everything is running, the bridge's *SITL Connection and Status* section sh
 
 For this workflow, keep **Position mode = MP SITL (Auto-Origin)**.
 
-#### Advanced users – WSL2 / standalone SITL
+#### Advanced users – WSL / standalone SITL
 
-You can also run ArduPilot SITL from WSL2 or a native environment using `sim_vehicle.py` and JSON output.
+You can also run ArduPilot SITL from WSL or a native environment using `sim_vehicle.py` and JSON output.
 
 Example:
 ```bash
@@ -144,11 +155,15 @@ When using a firmware built with that PR, you can select **`LLA`** as the positi
 
 ---
 
-## ⚙️ Configuration (`msfs_ap_bridge.ini`)
+## ⚙️ Configuration
 
-The application reads settings from `msfs_ap_bridge.ini`, located next to the executable.
+On first launch, the application automatically creates a configuration file
+with the same name as the executable (by default `msfs_ap_bridge.ini`)
+in the same folder.
 
-Minimal example:
+Manual creation or editing of this file is usually unnecessary: settings can be
+changed from the UI and are saved back to the `.ini` file.  
+The example below is only for reference or advanced/manual tweaking.
 
 ```ini
 [bridge]
