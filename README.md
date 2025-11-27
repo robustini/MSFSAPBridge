@@ -112,46 +112,63 @@ The status LEDs will indicate connectivity for Sim, TX, RX, and joystick.
 
 ### 3. Start ArduPilot SITL
 
-The bridge expects **JSON frame** SITL output.
+The bridge expects **JSON frame** SITL output. Because the stock ArduPilot SITL bundled with Mission Planner cannot ingest external simulator coordinates directly, you must replace its executable with a custom JSON-enabled build.
 
 #### Mission Planner (recommended for first-time users)
 
+##### Install the custom SITL executable
+
+1. Download the custom [`ArduPlane.exe`](https://drive.google.com/file/d/1uuExgT5Xz-lgpSiox4wQbVW-TmyszSpp/view?usp=sharing) (Google Drive link).
+2. Close **Mission Planner**.
+3. Navigate to:
+   ```
+   Documents\Mission Planner\sitl
+   ```
+4. Copy the downloaded `ArduPlane.exe` into this folder, overwriting the existing file.
+
+Mission Planner will continue to work normally, but its internal SITL will now use the JSON-capable backend required by the bridge.
+
+##### Launch SITL
+
 1. Open **Mission Planner**.
 2. Go to the **Simulation** tab.
-3. In **Model**, choose `plane` (or the vehicle type you want to simulate).
-4. In **Extra command line**, enter:
+3. In the **Options** dropdown, select **Skip Download** (so Mission Planner does not restore the original ArduPlane.exe).
+4. In **Model**, choose `plane` (or the vehicle type you want to simulate).
+5. In **Extra command line**, enter:
    ```text
    --model json
    ```
-5. Click the plane icon at the bottom to start SITL.
+6. Click the plane icon at the bottom to start SITL.
 
-Mission Planner will download and start ArduPilot SITL using the JSON backend and connect to the bridge.  
-Once everything is running, the bridge's *SITL Connection and Status* section should show all green LEDs with sensible rates.
+Once SITL is running, the bridge should show green indicators for all SITL-related signals.
 
-For this workflow, keep **Position mode = MP SITL (Auto-Origin)**.
+For this workflow, set the bridge **Position mode = LLA**.
 
-#### Advanced users – WSL / standalone SITL
+> **Note**  
+> Due to limits in ArduPilot’s current SITL implementation, the simulator cannot directly accept full Lat/Lon/Alt from an external source.  
+> The custom ArduPlane executable partially alleviates this, but the bridge must still operate in **LLA mode** when using Mission Planner’s internal SITL.
 
-You can also run ArduPilot SITL from WSL or a native environment using `sim_vehicle.py` and JSON output.
+#### Advanced users – WSL2 / standalone SITL
+
+You can also run ArduPilot SITL from WSL2 or a native Linux environment using `sim_vehicle.py` with the JSON backend enabled.
 
 Example:
 ```bash
 sim_vehicle.py -v ArduPlane -f json --sim-address 172.26.16.1 --console --map
 ```
 
-Where `172.26.16.1` is the IP address of Windows as seen from WSL.  
-In the bridge configuration, you must obviously enter the WSL IP address instead.
+Where `172.26.16.1` is the Windows host IP as seen from WSL2.  
+Enter the same IP in the bridge configuration so the bridge can send sensor data to SITL.
 
-- In this setup, use **Position mode = Position** in the bridge.
+By default, ArduPilot's JSON backend cannot properly accept full geographic coordinates (Lat/Lon/Alt) from an external simulator.  
+Because of this limitation, the classic **Position mode** of the bridge is not recommended: it works, but results in unreliable world-frame alignment and poor long-range accuracy.
 
-#### LLA mode and ArduPilot JSON backend
-
-By default, ArduPilot's JSON backend does **not** support receiving full geographic coordinates directly from the simulator.  
-This limitation can be removed by compiling ArduPilot with the following pull request applied:
+To enable proper external-sim LLA input, you must compile ArduPilot with the following pull request applied:
 
 > https://github.com/ArduPilot/ardupilot/pull/31543
 
-When using a firmware built with that PR, you can select **`LLA`** as the position mode in the bridge, and MSFS will send full Lat/Lon/Alt to SITL.
+When running a firmware built with that PR, you should always use **Position mode = LLA** in the bridge.  
+In this configuration, MSFS sends full Lat/Lon/Alt + local vector to SITL, enabling correct georeferencing and stable alignment throughout the flight.
 
 ---
 
