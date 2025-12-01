@@ -1135,7 +1135,56 @@ static LRESULT CALLBACK HudWndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             }
             return 0;
         }
+        case WM_LBUTTONDOWN: {
+            int x = (short)LOWORD(l);
+            int y = (short)HIWORD(l);
+
+            RECT rc;
+            GetClientRect(h, &rc);
+            int w_px = rc.right - rc.left;
+            int h_px = rc.bottom - rc.top;
+            int cx = w_px / 2;
+
+            RECT rcLatLon;
+            rcLatLon.left = cx - S(120);
+            rcLatLon.right = cx + S(120);
+            rcLatLon.top = h_px - S(30);
+            rcLatLon.bottom = h_px - S(5);
+
+            POINT pt;
+            pt.x = x;
+            pt.y = y;
+            if (PtInRect(&rcLatLon, pt)) {
+                RawSensors R;
+                {
+                    std::lock_guard<std::mutex> lk(G.m_tx);
+                    R = G.R;
+                }
+
+                wchar_t buf[64];
+                swprintf(buf, _countof(buf), L"%.6f, %.6f", R.lat_deg, R.lon_deg);
+
+                if (OpenClipboard(h)) {
+                    EmptyClipboard();
+                    SIZE_T bytes = (wcslen(buf) + 1) * sizeof(wchar_t);
+                    HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, bytes);
+                    if (hMem) {
+                        void* p = GlobalLock(hMem);
+                        if (p) {
+                            memcpy(p, buf, bytes);
+                            GlobalUnlock(hMem);
+                            SetClipboardData(CF_UNICODETEXT, hMem);
+                        } else {
+                            GlobalFree(hMem);
+                        }
+                    }
+                    CloseClipboard();
+                }
+            }
+            return 0;
+        }
     }
+
     return DefWindowProcW(h, m, w, l);
 }
 
