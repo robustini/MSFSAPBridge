@@ -116,18 +116,6 @@ The bridge expects **JSON frame** SITL output. Because the stock ArduPilot SITL 
 
 #### Mission Planner (recommended for first-time users)
 
-##### Install the custom SITL executable
-
-1. Download the custom [`ArduPlane.exe`](https://drive.google.com/file/d/1uuExgT5Xz-lgpSiox4wQbVW-TmyszSpp/view?usp=sharing) (Google Drive link).
-2. Close **Mission Planner**.
-3. Navigate to:
-   ```
-   Documents\Mission Planner\sitl
-   ```
-4. Copy the downloaded `ArduPlane.exe` into this folder, overwriting the existing file.
-
-Mission Planner will continue to work normally, but its internal SITL will now use the JSON-capable backend required by the bridge.
-
 ##### Launch SITL
 
 1. Open **Mission Planner**.
@@ -143,10 +131,6 @@ Mission Planner will continue to work normally, but its internal SITL will now u
 Once SITL is running, the bridge should show green indicators for all SITL-related signals.
 
 For this workflow, set the bridge **Position mode = LLA**.
-
-> **Note**  
-> Due to limits in ArduPilot’s current SITL implementation, the simulator cannot directly accept full Lat/Lon/Alt from an external source.  
-> The custom ArduPlane executable partially alleviates this, but the bridge must still operate in **LLA mode** when using Mission Planner’s internal SITL.
 
 #### Advanced users – WSL2 / standalone SITL
 
